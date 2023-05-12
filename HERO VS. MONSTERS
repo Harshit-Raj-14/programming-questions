@@ -1,0 +1,125 @@
+Problem Statement:
+
+You are given three arrays: playerHealth, monsterHealth, and coins. 
+The playerHealth array represents the health of each player, the monsterHealth array represents the health of each monster, and the coins array represents the number of coins you gain by killing each monster.
+A hero can defeat a monster if their health is greater than or equal to the monster's health. However, the player does not lose health when fighting a monster.
+Write a function maximumCoins(playerHealth, monsterHealth, coins) that returns an array of the maximum number of coins earned by each player. 
+The maximum number of coins earned by a player is the sum of the coins obtained by defeating all the monsters whose health is less than or equal to the player's health.
+
+Function Signature:
+public int[] maximumCoins(int[] playerHealth, int[] monsterHealth, int[] coins)
+
+Input:
+    Three arrays of integers:
+        playerHealth (1 ≤ playerHealth[i] ≤ 10^5): The health of each player. The length of this array is denoted by N.
+        monsterHealth (1 ≤ monsterHealth[i] ≤ 10^5): The health of each monster. The length of this array is also N.
+        coins (0 ≤ coins[i] ≤ 10^5): The number of coins gained by killing each monster. The length of this array is also N.
+
+Output:
+    Return an array of integers representing the maximum number of coins earned by each player. The length of the output array should be N.
+
+Constraints:
+    The length of the input arrays, N, will be between 1 and 10^3.
+
+Note:
+    A player can defeat a monster if their health is greater than or equal to the monster's health.
+    The player does not lose health when fighting a monster.
+    
+    EXAMPLES:
+    maximumCoins([100, 80, 120], [80, 90, 110], [50, 30, 60]) => [80, 60, 110]
+    
+    Explanation:
+
+    The first player has a health of 100 and can defeat the monster with 80 health, earning 50 coins.
+    The second player has a health of 80 and can defeat the monster with 80 health, earning 30 coins.
+    The third player has a health of 120 and can defeat all three monsters, earning a total of 60 + 30 + 20 = 110 coins.
+    
+    
+    
+    
+    
+    SOLUTIONS:
+    
+    BRUTE FORCE - O(n^2)
+    
+    To solve the problem, you can iterate over each player's health and compare it with the corresponding monster's health. 
+    If the player's health is greater than or equal to the monster's health, you can add the corresponding coin value to the player's maximum coins earned. 
+    Finally, return the array of maximum coins earned by each player.
+
+public int[] maximumCoins(int[] playerHealth, int[] monsterHealth, int[] coins) {
+    int[] maxCoins = new int[playerHealth.length];
+
+    for (int i = 0; i < playerHealth.length; i++) {
+        for (int j = 0; j < monsterHealth.length; j++) {
+            if (playerHealth[i] >= monsterHealth[j]) {
+                maxCoins[i] += coins[j];
+            }
+        }
+    }
+    return maxCoins;
+}
+
+
+OPTIMISED CODE - O(nlogn)
+
+To optimize the solution, you can sort the monsters based on their health in descending order. Then, iterate over the players and monsters simultaneously, starting with the strongest player and the strongest monster. 
+This way, you can maximize the coins earned by pairing each player with the strongest available monster they can defeat.
+
+import java.util.Arrays;
+
+public class Solution {
+    public int[] maximumCoins(int[] playerHealth, int[] monsterHealth, int[] coins) {
+        int[] maxCoins = new int[playerHealth.length];
+
+        // Sort monsters based on health in descending order
+        Monster[] monsters = new Monster[monsterHealth.length];
+        for (int i = 0; i < monsterHealth.length; i++) {
+            monsters[i] = new Monster(monsterHealth[i], coins[i]);
+        }
+        Arrays.sort(monsters, (a, b) -> Integer.compare(b.health, a.health));
+
+        // Iterate over players and monsters to maximize coins earned
+        int monsterIndex = 0;
+        for (int i = 0; i < playerHealth.length; i++) {
+            int player = playerHealth[i];
+            while (monsterIndex < monsters.length && player >= monsters[monsterIndex].health) {
+                maxCoins[i] += monsters[monsterIndex].coins;
+                monsterIndex++;
+            }
+        }
+
+        return maxCoins;
+    }
+
+    // Helper class for monsters
+    private static class Monster {
+        int health;
+        int coins;
+
+        public Monster(int health, int coins) {
+            this.health = health;
+            this.coins = coins;
+        }
+    }
+}
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
